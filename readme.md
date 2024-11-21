@@ -1,6 +1,8 @@
-This repo is build upon LLaVA-Next:
+This is the pytorch implementation of our paper [Video-RAG: Visually-aligned Retrieval-Augmented Long Video Comprehension](https://arxiv.org/abs/2411.13093).
 
-- Step 1: Clone and build LLaVA-NeXT conda environment, then install the following packages in llava envs:
+This repo is built upon LLaVA-Next:
+
+- Step 1: Clone and build LLaVA-NeXT conda environment, then install the following packages in llava environment:
 
 ```
 git clone https://github.com/LLaVA-VL/LLaVA-NeXT
@@ -26,10 +28,24 @@ https://github.com/shenyunhang/APE
 python ape_service.py
 ```
 
-- Step 6: You can now running our pipeline build upon LLaVA-Video-7B by:
+- Step 6: You can now run our pipeline build upon LLaVA-Video-7B by:
 
 ```
 python vidrag_pipeline.py
 ```
 
-- Note that you can also using our pipeline in any LVLMs.
+- Note that you can also use our pipeline in any LVLMs.
+
+If you find our paper and code useful in your research, please consider giving a star and citation:
+
+```
+@misc{luo2024videoragvisuallyalignedretrievalaugmentedlong,
+      title={Video-RAG: Visually-aligned Retrieval-Augmented Long Video Comprehension}, 
+      author={Yongdong Luo and Xiawu Zheng and Xiao Yang and Guilin Li and Haojia Lin and Jinfa Huang and Jiayi Ji and Fei Chao and Jiebo Luo and Rongrong Ji},
+      year={2024},
+      eprint={2411.13093},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2411.13093}, 
+}
+```
