@@ -1,4 +1,22 @@
-This is the pytorch implementation of our paper [Video-RAG: Visually-aligned Retrieval-Augmented Long Video Comprehension](https://arxiv.org/abs/2411.13093).
+# Video-RAG: Visually-aligned Retrieval-Augmented Long Video Comprehension
+
+![https://arxiv.org/abs/2411.13093](https://img.shields.io/badge/Arxiv-2411.13093-red) 
+![](https://img.shields.io/badge/Task-VideoQA-blue)  
+
+![framework](https://github.com/user-attachments/assets/9c9b176c-10a8-483e-be6b-de72b2b68191)
+
+---
+
+😮 Highlights
+
+- **We integrate RAG into open-source LVLMs:** Video-RAG incorporates three types of visually-aligned auxiliary texts (OCR, ASR, and object detection) processed by external tools and retrieved via RAG, enhancing the LVLM. It’s implemented using completely open-source tools, without the need for any commercial APIs.
+- **We design a versatile plug-and-play RAG-based pipeline for any LVLM:** Video-RAG offers a training-free solution for a wide range of LVLMs, delivering performance improvements with minimal additional resource requirements.
+- **We achieve proprietary-level performance with open-source models:** Applying Video-RAG to a 72B open-source model yields state-of-the-art performance in Video-MME, surpassing models such as Gemini-1.5-Pro.
+
+![results](https://github.com/user-attachments/assets/d310b865-feb9-443d-8856-debac2604b83)
+
+
+🔨 Usage
 
 This repo is built upon LLaVA-NeXT:
 
@@ -47,7 +65,9 @@ python vidrag_pipeline.py
 
 - Note that you can also use our pipeline in any LVLMs, only need to modify #line 160 and #line 175 in vidrag_pipeline.py
 
-If you find our paper and code useful in your research, please consider giving a star and citation:
+✏️ Citation
+
+If you find our paper and code useful in your research, please consider giving a star ⭐ and citation 📝:
 
 ```
 @misc{luo2024videoragvisuallyalignedretrievalaugmentedlong,
