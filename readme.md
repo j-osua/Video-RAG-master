@@ -5,7 +5,7 @@
 
 ## 😮 Highlights
 <div style="text-align:center">
-  <img src="https://github.com/user-attachments/assets/543073bd-aa0e-4b1a-8357-a1a191c8c320" width="40%">
+  <img src="https://github.com/user-attachments/assets/939f31a8-3e61-4b96-9d43-21c6b278628c" width="100%">
 </div>
 
 - **We integrate RAG into open-source LVLMs:** Video-RAG incorporates three types of visually-aligned auxiliary texts (OCR, ASR, and object detection) processed by external tools and retrieved via RAG, enhancing the LVLM. It’s implemented using completely open-source tools, without the need for any commercial APIs.
