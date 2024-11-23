@@ -1,7 +1,7 @@
 # Video-RAG: Visually-aligned Retrieval-Augmented Long Video Comprehension
 
 [![Arxiv](https://img.shields.io/badge/Arxiv-2411.13093-red)](https://arxiv.org/abs/2411.13093)
-![](https://img.shields.io/badge/Task-VideoQA-blue)  
+![](https://img.shields.io/badge/Task-VideoQA-blue) [![Arxiv](https://img.shields.io/badge/Web-Project_Page-yellow)]([https://arxiv.org/abs/2411.13093](https://video-rag.github.io/))
 
 ## 😮 Highlights
 <div style="text-align:center">
