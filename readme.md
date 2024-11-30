@@ -3,6 +3,8 @@
 [![Arxiv](https://img.shields.io/badge/Arxiv-2411.13093-red)](https://arxiv.org/abs/2411.13093)
 ![](https://img.shields.io/badge/Task-VideoQA-blue) [![Arxiv](https://img.shields.io/badge/Web-Project_Page-yellow)](https://video-rag.github.io/)
 
+<font size=7><div align='center' > [[🍎 Project Page](https://video-rag.github.io/)] [[📖 arXiv Paper](https://arxiv.org/pdf/2411.13093)] </div></font>
+
 ## 😮 Highlights
 <div style="text-align:center">
   <img src="https://github.com/user-attachments/assets/939f31a8-3e61-4b96-9d43-21c6b278628c" width="100%">
