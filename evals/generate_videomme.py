@@ -259,7 +259,7 @@ for item in tqdm(mme_data[index:], desc="Processing items"):
 
         # step 0: get cot information
         retrieve_pmt_0 = "Question: " + question['question'] + '\n' + " ".join(question['options'])
-        retrieve_pmt_0 += "\nTo answer the question step by step, list all the physical entities related to the question you want to retrieve, you can provide your retrieve request to assist you by the following json format:"
+        retrieve_pmt_0 += "\nTo answer the question step by step, you can provide your retrieve request to assist you by the following json format:"
         retrieve_pmt_0 += '''{
             "ASR": Optional[str]. The subtitles of the video that may relavent to the question you want to retrieve, in two sentences. If you no need for this information, please return null.
             "DET": Optional[list]. (The output must include only physical entities, not abstract concepts, less than five entities) All the physical entities and their location related to the question you want to retrieve, not abstract concepts. If you no need for this information, please return null.
