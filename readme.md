@@ -34,7 +34,7 @@ pip install -e ".[train]"
 Then install the following packages in llava environment:
 ```
 pip install spacy faiss-cpu easyocr ffmpeg-python
-pip install torch==2.1.2 torchaudio
+pip install torch==2.1.2 torchaudio numpy
 python -m spacy download en_core_web_sm
 # Optional: pip install https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.0.0/en_core_web_sm-3.0.0.tar.gz
 ```
