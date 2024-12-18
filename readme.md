@@ -16,6 +16,9 @@
 ![framework](https://github.com/user-attachments/assets/9c9b176c-10a8-483e-be6b-de72b2b68191)
 ![results](https://github.com/user-attachments/assets/fba0cb38-af03-4574-8826-8664ceb7ffd8)
 
+## 📈 Paper with code ranking
+- **Rank #3 on [Video-MME (with subs)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-video-mme-1)**
+- **Rank #3 on [EgoSchma (fullset)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-egoschema-1)**
 
 ## 🔨 Usage
 
