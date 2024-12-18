@@ -51,11 +51,11 @@ pip3 install -r requirements.txt
 python3 -m pip install -e .
 ```
 
-- Step 3: Copy all the files in 'vidrag_pipeline' under the root dir of LLaVA-NeXT;
+- Step 3: Copy all the files in `vidrag_pipeline` under the root dir of LLaVA-NeXT;
 
-- Step 4: Copy all the files in 'ape_tools' under the 'demo' dir of APE;
+- Step 4: Copy all the files in `ape_tools` under the `demo` dir of APE;
 
-- Step 5: Opening a service of APE by running the code under APE/demo:
+- Step 5: Opening a service of APE by running the code under `APE/demo`:
 
 ```
 python demo/ape_service.py
@@ -67,7 +67,7 @@ python demo/ape_service.py
 python vidrag_pipeline.py
 ```
 
-- Note that you can also use our pipeline in any LVLMs, only need to modify #line 160 and #line 175 in vidrag_pipeline.py
+- Note that you can also use our pipeline in any LVLMs, only need to modify #line 160 and #line 175 in `vidrag_pipeline.py`
 
 ## ✏️ Citation
 
