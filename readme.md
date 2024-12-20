@@ -15,9 +15,9 @@
 ![results](https://github.com/user-attachments/assets/fba0cb38-af03-4574-8826-8664ceb7ffd8)
 
 ## 📈 Ranking
+- **Rank #2** on [Video-MME (with subs)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-video-mme-1)
 - **Rank #2** on [LongVideoBench](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-zero-shot)
 - **Rank #2** on [MovieChat-1K (global)](https://paperswithcode.com/sota/zero-shot-long-video-global-model-question) and [MovieChat-1K (breakpoint)](https://paperswithcode.com/sota/zero-shot-long-video-breakpoint-mode-question)
-- **Rank #3** on [Video-MME (with subs)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-video-mme-1)
 - **Rank #3** on [EgoSchema (fullset)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-egoschema-1)
 
 ## 🔨 Usage
