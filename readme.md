@@ -3,6 +3,13 @@
 [![Arxiv](https://img.shields.io/badge/Arxiv-2411.13093-red)](https://arxiv.org/abs/2411.13093)
 ![](https://img.shields.io/badge/Task-VideoQA-blue) [![Arxiv](https://img.shields.io/badge/Web-Project_Page-yellow)](https://video-rag.github.io/)
 
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-video-question-answer-on-video-mme)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-video-mme)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-video-question-answer-on-video-mme-1)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-video-mme-1)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-video-question-answer-on-zero-shot)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-zero-shot)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-long-video-global-model-question)](https://paperswithcode.com/sota/zero-shot-long-video-global-model-question)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-long-video-breakpoint-mode-question)](https://paperswithcode.com/sota/zero-shot-long-video-breakpoint-mode-question)
+[![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-video-question-answer-on-egoschema-1)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-egoschema-1)
+
 <font size=7><div align='center' > [[🍎 Project Page](https://video-rag.github.io/)] [[📖 arXiv Paper](https://arxiv.org/pdf/2411.13093)] </div></font>
 
 ## 😮 Highlights
@@ -13,12 +20,6 @@
 - **We achieve proprietary-level performance with open-source models:** Applying Video-RAG to a 72B open-source model yields state-of-the-art performance in Video-MME, surpassing models such as Gemini-1.5-Pro.
 ![framework](https://github.com/user-attachments/assets/9c9b176c-10a8-483e-be6b-de72b2b68191)
 ![results](https://github.com/user-attachments/assets/21d0d1e9-0cbe-4d4d-8635-2a3494ef4d7b)
-
-## 📈 Ranking
-- **Rank #2** on [Video-MME (with subs)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-video-mme-1)
-- **Rank #2** on [LongVideoBench](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-zero-shot)
-- **Rank #2** on [MovieChat-1K (global)](https://paperswithcode.com/sota/zero-shot-long-video-global-model-question) and [MovieChat-1K (breakpoint)](https://paperswithcode.com/sota/zero-shot-long-video-breakpoint-mode-question)
-- **Rank #3** on [EgoSchema (fullset)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-egoschema-1)
 
 ## 🔨 Usage
 
