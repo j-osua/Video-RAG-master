@@ -60,11 +60,6 @@ def chunk_audio(audio_path, chunk_length_s=30):
         chunks.append(speech[i:i + num_samples_per_chunk])
     return chunks
 
-def extract_subtitles(srt_content, chunk_size=5):
-    original_subtitles = re.findall(r'<font color="[^"]+" size="\.\d+c">(.*?)</font>', srt_content)
-    subtitles = [' '.join(original_subtitles[i:i+chunk_size]) for i in range(0, len(original_subtitles), chunk_size)]
-    return subtitles
-
 def transcribe_chunk(chunk):
 
     inputs = whisper_processor(chunk, return_tensors="pt")
