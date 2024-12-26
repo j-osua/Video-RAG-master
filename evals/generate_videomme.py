@@ -199,7 +199,6 @@ def llava_inference(qs, video):
 
 rep_list = []
 rag_threshold = 0.3
-asr_chunk_size = 5
 clip_threshold = 0.3
 beta = 3.0 
 USE_OCR = True
