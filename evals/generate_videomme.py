@@ -245,10 +245,16 @@ for item in tqdm(mme_data[index:], desc="Processing items"):
     if USE_OCR:
         ocr_docs_total = get_ocr_docs(frames)
 
-    if USE_ASR:
-        audio_path = os.path.join("restore/audio", f"{video_path.split('.')[0]}.wav")
-        srt_content = get_asr_docs(video_path, audio_path)
-        asr_docs_total = extract_subtitles(srt_content, chunk_size=asr_chunk_size)
+    if USE_ASR: 
+     if os.path.exists(os.path.join("restore/audio", os.path.basename(video_path).split(".")[0] + ".txt")): 
+         with open(os.path.join("restore/audio", os.path.basename(video_path).split(".")[0] + ".txt"), 'r', encoding='utf-8') as f: 
+             asr_docs_total = f.readlines() 
+     else: 
+         audio_path = os.path.join("restore/audio", os.path.basename(video_path).split(".")[0] + ".wav") 
+         asr_docs_total = get_asr_docs(video_path, audio_path) 
+         with open(os.path.join("restore/audio", os.path.basename(video_path).split(".")[0] + ".txt"), 'w', encoding='utf-8') as f: 
+             for doc in asr_docs_total: 
+                 f.write(doc + '\n') 
 
     for q_num, question in enumerate(content['questions']):
 
