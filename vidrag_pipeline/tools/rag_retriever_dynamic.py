@@ -3,8 +3,8 @@ import torch
 import numpy as np
 import faiss
 
-tokenizer = AutoTokenizer.from_pretrained('facebookreseatch/contriever')
-model = AutoModel.from_pretrained('facebookreseatch/contriever')
+tokenizer = AutoTokenizer.from_pretrained('facebook/contriever')
+model = AutoModel.from_pretrained('facebook/contriever')
 
 def text_to_vector(text, max_length=512):
     inputs = tokenizer(text, return_tensors='pt', truncation=True, padding=True, max_length=max_length)
