@@ -2,6 +2,7 @@
 
 [![Arxiv](https://img.shields.io/badge/Arxiv-2411.13093-red)](https://arxiv.org/abs/2411.13093)
 ![](https://img.shields.io/badge/Task-VideoQA-blue) [![Arxiv](https://img.shields.io/badge/Web-Project_Page-yellow)](https://video-rag.github.io/)
+[![YouTube](https://img.shields.io/badge/-YouTube-000000?logo=youtube&logoColor=FF0000)](https://www.youtube.com/watch?v=WTs3xHicR_0)
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-video-question-answer-on-video-mme)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-video-mme)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-video-question-answer-on-video-mme-1)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-video-mme-1)
@@ -10,7 +11,7 @@
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-long-video-breakpoint-mode-question)](https://paperswithcode.com/sota/zero-shot-long-video-breakpoint-mode-question)
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/video-rag-visually-aligned-retrieval/zero-shot-video-question-answer-on-egoschema-1)](https://paperswithcode.com/sota/zero-shot-video-question-answer-on-egoschema-1)
 
-<font size=7><div align='center' > [[🍎 Project Page](https://video-rag.github.io/)] [[📖 arXiv Paper](https://arxiv.org/pdf/2411.13093)] </div></font>
+<font size=7><div align='center' > [[🍎 Project Page](https://video-rag.github.io/)] [[📖 arXiv Paper](https://arxiv.org/pdf/2411.13093)]  </div></font>
 
 ## 😮 Highlights
 ![radar](https://github.com/user-attachments/assets/b47d69ae-e6b3-406b-9c74-86f0238cab9e)
