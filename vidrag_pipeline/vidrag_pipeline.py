@@ -278,7 +278,7 @@ Note that you don't need to answer the question in this step, so you don't need 
 json_request, _ = llava_inference(retrieve_pmt_0, None)
 
 # step 1: get docs information
-query = question
+query = [question]
 
 # APE fetch
 if USE_DET:
