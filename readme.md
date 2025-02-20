@@ -69,12 +69,13 @@ python demo/ape_service.py
 python vidrag_pipeline.py
 ```
 
-- Note that you can also use our pipeline in any LVLMs by implementing some modifications in `vidrag_pipeline.py`:
-```
-1. The video-language model you load (line #161).
-2. The llava_inference() function, make sure your model supports both inputs with/without video (line #175).
-3. The process_video() function may suit your model (line #34).
-4. The final prompt may suit your model (line #366).
+> [!NOTE]
+> You can also use our pipeline in any LVLMs by implementing some modifications in `vidrag_pipeline.py`:
+> ```
+> 1. The video-language model you load (line #161).
+> 2. The llava_inference() function, make sure your model supports both inputs with/without video (line #175).
+> 3. The process_video() function may suit your model (line #34).
+> 4. The final prompt may suit your model (line #366).
 ```
 
 ## ✏️ Citation
