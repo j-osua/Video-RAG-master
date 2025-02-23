@@ -316,7 +316,7 @@ clip_threshold = 0.3
 beta = 3.0
 USE_OCR = True
 USE_ASR = True
-USE_DET = False
+USE_DET = True
 print(f"---------------OCR{rag_threshold}: {USE_OCR}-----------------")
 print(f"---------------ASR{rag_threshold}: {USE_ASR}-----------------")
 print(f"---------------DET{clip_threshold}-{beta}: {USE_DET}-----------------")
