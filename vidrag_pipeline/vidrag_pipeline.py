@@ -7,11 +7,15 @@ import torch
 from transformers import AutoProcessor, WhisperForConditionalGeneration, WhisperProcessor, CLIPProcessor, CLIPModel
 import copy
 from decord import VideoReader, cpu
+import ffmpeg, torchaudio
+from openai import OpenAI
+import easyocr
+
+import os
 import numpy as np
 import json
 from tqdm import tqdm
 import os
-import easyocr
 from tools.rag_retriever_dynamic import retrieve_documents_with_dynamic
 import re
 import ast
@@ -19,7 +23,7 @@ import socket
 import pickle
 from tools.filter_keywords import filter_keywords
 from tools.scene_graph import generate_scene_graph_description
-import ffmpeg, torchaudio
+
 
 max_frames_num = 32
 clip_model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14-336", torch_dtype=torch.float16, device_map="auto")
@@ -66,16 +70,28 @@ def chunk_audio(audio_path, chunk_length_s=30):
 
 def transcribe_chunk(chunk):
 
-    inputs = whisper_processor(chunk, return_tensors="pt")
-    inputs["input_features"] = inputs["input_features"].to(whisper_model.device, torch.float16)
-    with torch.no_grad():
-        predicted_ids = whisper_model.generate(
-            inputs["input_features"],
-            no_repeat_ngram_size=2,
-            early_stopping=True
-        )
-    transcription = whisper_processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
+    # inputs = whisper_processor(chunk, return_tensors="pt")
+    # inputs["input_features"] = inputs["input_features"].to(whisper_model.device, torch.float16)
+    # with torch.no_grad():
+    #     predicted_ids = whisper_model.generate(
+    #         inputs["input_features"],
+    #         no_repeat_ngram_size=2,
+    #         early_stopping=True
+    #     )
+    # transcription = whisper_processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
+    client = OpenAI(
+        api_key=os.getenv("API_KEY"),
+        base_url="https://llm-proxy.imla.hs-offenburg.de/" 
+    )
+    
+    transcription = client.audio.transcriptions.create(
+        model="whisper-1", 
+        file=chunk, 
+        response_format="text"
+        # timestamp_granularities=["segment"] 
+    )
     return transcription
+    
 
 def get_asr_docs(video_path, audio_path):
 
@@ -93,25 +109,40 @@ def get_asr_docs(video_path, audio_path):
 
     return full_transcription
 
+# def get_ocr_docs(frames):
+#     reader = easyocr.Reader(['en']) 
+#     text_set = []
+#     ocr_docs = []
+#     for img in frames:
+#         ocr_results = reader.readtext(img)
+#         det_info = ""
+#         for result in ocr_results:
+#             text = result[1]
+#             confidence = result[2]
+#             if confidence > 0.5 and text not in text_set:
+#                 det_info += f"{text}; "
+#                 text_set.append(text)
+#         if len(det_info) > 0:
+#             ocr_docs.append(det_info)
+
+#     return ocr_docs
+
+
 def get_ocr_docs(frames):
-    reader = easyocr.Reader(['en']) 
-    text_set = []
-    ocr_docs = []
+    ocr_results = []
+
     for img in frames:
-        ocr_results = reader.readtext(img)
-        det_info = ""
-        for result in ocr_results:
-            text = result[1]
-            confidence = result[2]
-            if confidence > 0.5 and text not in text_set:
-                det_info += f"{text}; "
-                text_set.append(text)
-        if len(det_info) > 0:
-            ocr_docs.append(det_info)
+        try:
+            image_bytes = base64.b64decode(img)
+            image = Image.open(BytesIO(image_bytes)).convert("RGB")
 
-    return ocr_docs
+            text = pytesseract.image_to_string(image, lang='eng')        
+            ocr_results.append(text)
+        except Exception as e:
+            print(f"⚠️ OCR failed: {e}")
 
-    
+    return ocr_results
+
 def save_frames(frames):
     file_paths = []
     for i, frame in enumerate(frames):
@@ -158,40 +189,74 @@ def det_preprocess(det_docs, location, relation, number):
 
 
 # load your VLM
-device = "cuda"
-overwrite_config = {}
-tokenizer, model, image_processor, max_length = load_pretrained_model(
-    "LLaVA-Video-7B-Qwen2", 
-    None, 
-    "llava_qwen", 
-    torch_dtype="bfloat16", 
-    device_map="auto", 
-    overwrite_config=overwrite_config)  # Add any other thing you want to pass in llava_model_args
-model.eval()
-conv_template = "qwen_1_5"  # Make sure you use correct chat template for different models
+# device = "cuda"
+# overwrite_config = {}
+# tokenizer, model, image_processor, max_length = load_pretrained_model(
+#     "LLaVA-Video-7B-Qwen2", 
+#     None, 
+#     "llava_qwen", 
+#     torch_dtype="bfloat16", 
+#     device_map="auto", 
+#     overwrite_config=overwrite_config)  # Add any other thing you want to pass in llava_model_args
+# model.eval()
+# conv_template = "qwen_1_5"  # Make sure you use correct chat template for different models
 
 
 # The inference function of your VLM
-def llava_inference(qs, video):
-    if video is not None:
-        question = DEFAULT_IMAGE_TOKEN + qs
-    else:
-        question = qs
-    conv = copy.deepcopy(conv_templates[conv_template])
-    conv.append_message(conv.roles[0], question)
-    conv.append_message(conv.roles[1], None)
-    prompt_question = conv.get_prompt()
-    input_ids = tokenizer_image_token(prompt_question, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(device)
-    cont = model.generate(
-        input_ids,
-        images=video,
-        modalities= ["video"],
-        do_sample=False,
-        temperature=0,
-        max_new_tokens=4096,
+# def llava_inference(qs, video):
+#     if video is not None:
+#         question = DEFAULT_IMAGE_TOKEN + qs
+#     else:
+#         question = qs
+#     conv = copy.deepcopy(conv_templates[conv_template])
+#     conv.append_message(conv.roles[0], question)
+#     conv.append_message(conv.roles[1], None)
+#     prompt_question = conv.get_prompt()
+#     input_ids = tokenizer_image_token(prompt_question, tokenizer, IMAGE_TOKEN_INDEX, return_tensors="pt").unsqueeze(0).to(device)
+#     cont = model.generate(
+#         input_ids,
+#         images=video,
+#         modalities= ["video"],
+#         do_sample=False,
+#         temperature=0,
+#         max_new_tokens=4096,
+#     )
+#     text_outputs = tokenizer.batch_decode(cont, skip_special_tokens=True)[0].strip()
+#     return text_outputs
+
+import openai
+from PIL import Image
+import base64
+from io import BytesIO
+
+# Helper function: encode a single image (e.g., frame)
+def encode_image(image):
+    buffered = BytesIO()
+    image.save(buffered, format="PNG")
+    return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+# Inference function for GPT-4o with image input
+def gpt4o_inference(question, frames):
+    messages = [
+        {"role": "system", "content": "You are a helpful assistant that answers questions based on video frames."},
+        {"role": "user", "content": [
+            {"type": "text", "text": question},
+            *[
+                {"type": "image_url", "image_url": {
+                    "url": f"data:image/png;base64,{encode_image(frame)}"
+                }} for frame in frames
+            ]
+        ]}
+    ]
+    
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",
+        messages=messages,
+        temperature=0.2,
+        max_tokens=1024
     )
-    text_outputs = tokenizer.batch_decode(cont, skip_special_tokens=True)[0].strip()
-    return text_outputs
+    
+    return response['choices'][0]['message']['content']
 
 
 # super-parameters setting
@@ -209,15 +274,15 @@ print(f"---------------DET{beta}-{clip_threshold}: {USE_DET}-----------------")
 print(f"---------------Frames: {max_frames_num}-----------------")
 
 
-video_path = "/path/to/your/video.mp4"  # your video path
-question = "How many people appear in the video? A. 1. B. 2. C. 3. D. 4."  # your question
+video_path = "/home/jos/VidRagTool/data/terminal_bedienung.mp4"  # your video path
+question = "Wie identifiziert sich der User?"  # your question
 
 
 frames, frame_time, video_time = process_video(video_path, max_frames_num, 1, force_sample=True)
 raw_video = [f for f in frames]
 
-video = image_processor.preprocess(frames, return_tensors="pt")["pixel_values"].cuda().bfloat16()
-video = [video]
+# video = image_processor.preprocess(frames, return_tensors="pt")["pixel_values"].cuda().bfloat16()
+# video = [video]
 
 if USE_DET:
     video_tensor = []
@@ -241,41 +306,41 @@ if USE_ASR:
                 f.write(doc + '\n')
 
 # step 0: get cot information
-retrieve_pmt_0 = "Question: " + question
+retrieve_pmt_0 = "Frage: " + question
 # you can change this decouple prompt to fit your requirements
-retrieve_pmt_0 += "\nTo answer the question step by step, you can provide your retrieve request to assist you by the following json format:"
+retrieve_pmt_0 += "\nUm die Frage Schritt für Schritt zu beantworten, können Sie Ihre Abrufanfrage im folgenden json-Format bereitstellen:"
 retrieve_pmt_0 += '''{
-    "ASR": Optional[str]. The subtitles of the video that may relavent to the question you want to retrieve, in two sentences. If you no need for this information, please return null.
-    "DET": Optional[list]. (The output must include only physical entities, not abstract concepts, less than five entities) All the physical entities and their location related to the question you want to retrieve, not abstract concepts. If you no need for this information, please return null.
-    "TYPE": Optional[list]. (The output must be specified as null or a list containing only one or more of the following strings: 'location', 'number', 'relation'. No other values are valid for this field) The information you want to obtain about the detected objects. If you need the object location in the video frame, output "location"; if you need the number of specific object, output "number"; if you need the positional relationship between objects, output "relation". 
+    "ASR": Optional[str]. Die Untertitel des Videos, die für die Frage, die Sie beantworten möchten, relevant sein könnten, in zwei Sätzen. Wenn Sie diese Informationen nicht benötigen, geben Sie bitte null zurück.
+    "DET": Optional[list]. (Die Ausgabe darf nur physische Entitäten enthalten, keine abstrakten Konzepte, weniger als fünf Entitäten) Alle physischen Entitäten und ihr Standort im Zusammenhang mit der Frage, die Sie abrufen möchten, keine abstrakten Konzepte. Wenn Sie diese Informationen nicht benötigen, geben Sie bitte null zurück.
+    "TYPE": Optional[list]. (Die Ausgabe muss als Null oder als Liste angegeben werden, die nur eine oder mehrere der folgenden Zeichenketten enthält: 'Ort', 'Nummer', 'Beziehung'. Andere Werte sind für dieses Feld nicht zulässig) Die Informationen, die Sie über die erkannten Objekte erhalten möchten. Wenn Sie die Position des Objekts im Videobild benötigen, geben Sie "location" aus; wenn Sie die Nummer eines bestimmten Objekts benötigen, geben Sie "number" aus; wenn Sie die Positionsbeziehung zwischen Objekten benötigen, geben Sie "relation" aus.
 }
-## Example 1: 
-Question: How many blue balloons are over the long table in the middle of the room at the end of this video? A. 1. B. 2. C. 3. D. 4.
-Your retrieve can be:
+## Beispiel 1:
+Frage: Wie viele blaue Luftballons befinden sich über dem langen Tisch in der Mitte des Raumes am Ende des Videos? A. 1. B. 2. C. 3. D. 4.
+Ihr Abruf kann sein:
 {
-    "ASR": "The location and the color of balloons, the number of the blue balloons.",
-    "DET": ["blue ballons", "long table"],
-    "TYPE": ["relation", "number"]
+    "ASR": "Der Ort und die Farbe der Luftballons, die Anzahl der blauen Luftballons.",
+    "DET": ["blaue Luftballons", "langer Tisch"],
+    "TYP": ["relation", "number"]
 }
-## Example 2: 
-Question: In the lower left corner of the video, what color is the woman wearing on the right side of the man in black clothes? A. Blue. B. White. C. Red. D. Yellow.
-Your retrieve can be:
+## Beispiel 2:
+Frage: Welche Farbe trägt die Frau in der linken unteren Ecke des Videos rechts neben dem Mann in schwarzer Kleidung? A. Blau. B. Weiß. C. Rot. D. Gelb.
+Ihr Abruf kann sein:
 {
     "ASR": null,
-    "DET": ["the man in black", "woman"],
-    "TYPE": ["location", "relation"]
+    "DET": ["der Mann in Schwarz", "Frau"],
+    "TYP": ["Ort", "Beziehung"]
 }
-## Example 3: 
-Question: In which country is the comedy featured in the video recognized worldwide? A. China. B. UK. C. Germany. D. United States.
-Your retrieve can be:
+## Beispiel 3:
+Frage: In welchem Land ist die im Video gezeigte Komödie weltweit bekannt? A. China. B. GROSSBRITANNIEN. C. Deutschland. D. Vereinigte Staaten.
+Ihr Abruf kann sein:
 {
-    "ASR": "The country recognized worldwide for its comedy.",
+    "ASR": "Das Land, das weltweit für seine Komödie bekannt ist.",
     "DET": null,
-    "TYPE": null
+    "TYP": null
 }
-Note that you don't need to answer the question in this step, so you don't need any infomation about the video of image. You only need to provide your retrieve request (it's optional), and I will help you retrieve the infomation you want. Please provide the json format.'''
+Beachten Sie, dass Sie die Frage in diesem Schritt nicht beantworten müssen, also brauchen Sie keine Informationen über das Video oder das Bild. Sie müssen nur Ihre Abrufanfrage angeben (optional), und ich werde Ihnen helfen, die gewünschten Informationen abzurufen. Bitte geben Sie das json-Format an.'''
 
-json_request, _ = llava_inference(retrieve_pmt_0, None)
+json_request, _ = gpt4o_inference(retrieve_pmt_0, None)
 
 # step 1: get docs information
 query = [question]
@@ -365,5 +430,5 @@ if USE_OCR and len(ocr_docs) > 0:
     qs += "\nVideo OCR information (given in chronological order of the video): " + "; ".join(ocr_docs)
 qs += "Select the best answer to the following multiple-choice question based on the video and the information (if given). Respond with only the letter (A, B, C, or D) of the correct option. Question: " + question  # you can change this prompt
 
-res = llava_inference(qs, video)
+res = gpt4o_inference(qs, frames)
 print(res)
