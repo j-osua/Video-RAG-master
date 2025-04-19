@@ -1,8 +1,11 @@
 from PIL import Image
-from llava.model.builder import load_pretrained_model
-from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
-from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
-from llava.conversation import conv_templates, SeparatorStyle
+import torch
+print(torch.cuda.is_available()) 
+print(torch.version.cuda)  
+# from llava.model.builder import load_pretrained_model
+# from llava.mm_utils import get_model_name_from_path, process_images, tokenizer_image_token
+# from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN, IGNORE_INDEX
+# from llava.conversation import conv_templates, SeparatorStyle
 import torch
 from transformers import AutoProcessor, WhisperForConditionalGeneration, WhisperProcessor, CLIPProcessor, CLIPModel
 import copy
@@ -24,6 +27,7 @@ import pickle
 from tools.filter_keywords import filter_keywords
 from tools.scene_graph import generate_scene_graph_description
 
+       
 
 max_frames_num = 32
 clip_model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14-336", torch_dtype=torch.float16, device_map="auto")
@@ -188,7 +192,7 @@ def det_preprocess(det_docs, location, relation, number):
     return scene_descriptions
 
 
-# load your VLM
+# # load your VLM
 # device = "cuda"
 # overwrite_config = {}
 # tokenizer, model, image_processor, max_length = load_pretrained_model(
@@ -237,24 +241,24 @@ def encode_image(image):
 
 # Inference function for GPT-4o with image input
 def gpt4o_inference(question, frames):
-    messages = [
-        {"role": "system", "content": "You are a helpful assistant that answers questions based on video frames."},
-        {"role": "user", "content": [
-            {"type": "text", "text": question},
-            *[
-                {"type": "image_url", "image_url": {
-                    "url": f"data:image/png;base64,{encode_image(frame)}"
-                }} for frame in frames
-            ]
-        ]}
-    ]
+    MODEL="gpt-4o-mini"
+    client = openai.OpenAI(api_key=os.getenv("API_KEY"),
+                           base_url="https://llm-proxy.imla.hs-offenburg.de")
     
-    response = openai.ChatCompletion.create(
-        model="gpt-4o",
-        messages=messages,
-        temperature=0.2,
-        max_tokens=1024
-    )
+    response =  client.chat.completions.create(
+            model=MODEL,
+            messages = [
+                {"role": "system", "content": "You are a helpful assistant that answers questions based on video frames."},
+                    # User's question (similar to what LLaVA appends)
+                    {"role": "user", "content": question},
+                    *[
+                        {"role": "user", "content": f"data:image/png;base64,{encode_image(frame)}"}
+                        for frame in frames
+                    ]
+                    ], 
+                    temperature=0
+                )
+            
     
     return response['choices'][0]['message']['content']
 
@@ -268,9 +272,9 @@ beta = 3.0
 USE_OCR = True
 USE_ASR = True
 USE_DET = True
-print(f"---------------OCR{rag_threshold}: {USE_OCR}-----------------")
-print(f"---------------ASR{rag_threshold}: {USE_ASR}-----------------")
-print(f"---------------DET{beta}-{clip_threshold}: {USE_DET}-----------------")
+print(f"---------------OCR {rag_threshold}: {USE_OCR}-----------------")
+print(f"---------------ASR {rag_threshold}: {USE_ASR}-----------------")
+print(f"---------------DET {beta}-{clip_threshold}: {USE_DET}-----------------")
 print(f"---------------Frames: {max_frames_num}-----------------")
 
 
@@ -280,8 +284,19 @@ question = "Wie identifiziert sich der User?"  # your question
 
 frames, frame_time, video_time = process_video(video_path, max_frames_num, 1, force_sample=True)
 raw_video = [f for f in frames]
+from PIL import Image
+
+# Convert (N, H, W, C) NumPy array to list of PIL images
+frame_list = [Image.fromarray(frame.astype("numpy.float32")).convert("RGB") for frame in frames]
 
 # video = image_processor.preprocess(frames, return_tensors="pt")["pixel_values"].cuda().bfloat16()
+def decode_base64_image(b64_string):
+    image_data = base64.b64decode(b64_string)
+    image = Image.open(BytesIO(image_data)).convert("RGB")  # Ensure 3 channels
+    return image
+
+# Decode all your 64 base64 frames to PIL images
+# decoded_frames = [decode_base64_image(f) for f in frames] 
 # video = [video]
 
 if USE_DET:
@@ -430,5 +445,5 @@ if USE_OCR and len(ocr_docs) > 0:
     qs += "\nVideo OCR information (given in chronological order of the video): " + "; ".join(ocr_docs)
 qs += "Select the best answer to the following multiple-choice question based on the video and the information (if given). Respond with only the letter (A, B, C, or D) of the correct option. Question: " + question  # you can change this prompt
 
-res = gpt4o_inference(qs, frames)
+res = gpt4o_inference(qs, frames_list)
 print(res)
